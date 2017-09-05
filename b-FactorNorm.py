@@ -3,11 +3,10 @@
 import argparse
 from Bio.PDB import *
 import numpy as np
-import os.path
 
 # command line input
 file_parser = argparse.ArgumentParser(description="Hello, this tool normalizes pdb b-factors")
-file_parser.add_argument("pdb_in", help="specify absolute path and name for input.pdb")
+file_parser.add_argument("pdb_in", help="specify file input name and path if located in another folder")
 file_parser.add_argument("output_name", help="specify file output name, if no path is included the "
                                              "file will output where the script is located")
 args = file_parser.parse_args()
