@@ -17,7 +17,7 @@ atom_bFactors = [x.get_bfactor() for x in structure.get_atoms()]
 bFactors_mean = np.mean(atom_bFactors)
 bFactors_stDev = np.std(atom_bFactors)
 # set atoms to have normalized bfactor via list comprehensions
-[x.set_bfactor(x.get_bfactor() - bFactors_mean / bFactors_stDev) for x in structure.get_atoms()]
+[x.set_bfactor((x.get_bfactor() - bFactors_mean) / bFactors_stDev) for x in structure.get_atoms()]
 # output file
 io = PDBIO()
 io.set_structure(structure)
