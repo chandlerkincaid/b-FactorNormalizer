@@ -3,12 +3,14 @@
 import argparse
 from Bio.PDB import *
 import numpy as np
+import csv
 
 # command line input
 file_parser = argparse.ArgumentParser(description="Hello, this tool normalizes pdb b-factors")
-file_parser.add_argument("pdb_in", help="specify file input name and path if located in another folder")
+file_parser.add_argument("pdb_in", help="specify absolute path and name for input.pdb")
 file_parser.add_argument("output_name", help="specify file output name, if no path is included the "
                                              "file will output where the script is located")
+file_parser.add_argument("-w", "--csvwrite", help="adding this flag will output a csv file", action="store_true")
 args = file_parser.parse_args()
 # biopython file handling
 PDB_parser = PDBParser()
@@ -22,3 +24,17 @@ bFactors_stDev = np.std(atom_bFactors)
 io = PDBIO()
 io.set_structure(structure)
 io.save(args.output_name)
+# csv output
+csv_output = []
+chain_output = structure.get_chains()
+# add an entire chains atoms and b -factor to a row
+for chains in chain_output:
+    csv_output.append([atoms.get_id() for atoms in chains.get_atoms()])
+    csv_output.append([atoms.get_bfactor() for atoms in chains.get_atoms()])
+# transpose matrix to desired format
+transposed = map(lambda *x: list(x), *csv_output)
+if args.csvwrite:
+    with open(args.output_name + '.csv', 'w') as csvfile:
+        mywriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        [mywriter.writerow(row) for row in transposed]
+
