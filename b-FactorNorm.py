@@ -27,9 +27,9 @@ io.save(args.output_name)
 # csv output
 csv_output = []
 chain_output = structure.get_chains()
-# add an entire chains atoms and b -factor to a row
+# add an entire chains residues, atoms, and b -factor to rows
 for chains in chain_output:
-    csv_output.append([atoms.get_id() for atoms in chains.get_atoms()])
+    csv_output.append([atoms.get_full_id() for atoms in chains.get_atoms()])
     csv_output.append([atoms.get_bfactor() for atoms in chains.get_atoms()])
 # transpose matrix to desired format
 transposed = map(lambda *x: list(x), *csv_output)
