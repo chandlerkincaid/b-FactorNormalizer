@@ -3,6 +3,7 @@
 import argparse
 from Bio.PDB import *
 import numpy as np
+import re
 import csv
 
 # command line input
@@ -28,8 +29,15 @@ io.save(args.output_name)
 csv_output = []
 chain_output = structure.get_chains()
 # add an entire chains residues, atoms, and b -factor to rows
+pattern = re.compile('[A-Z0-9]+')
 for chains in chain_output:
-    csv_output.append([atoms.get_full_id() for atoms in chains.get_atoms()])
+    atom_strings = [re.findall(pattern, str(atoms.get_full_id())) for atoms in chains.get_atoms()]
+    chain_column = [atoms[2] for atoms in atom_strings]
+    residue_column = [atoms[3] for atoms in atom_strings]
+    atom_column = [atoms[4] for atoms in atom_strings]
+    csv_output.append(chain_column)
+    csv_output.append(residue_column)
+    csv_output.append(atom_column)
     csv_output.append([atoms.get_bfactor() for atoms in chains.get_atoms()])
 # transpose matrix to desired format
 transposed = map(lambda *x: list(x), *csv_output)
