@@ -5,6 +5,7 @@ from Bio.PDB import *
 import numpy as np
 import re
 import csv
+import itertools
 
 # command line input
 file_parser = argparse.ArgumentParser(description="Hello, this tool normalizes pdb b-factors")
@@ -40,7 +41,7 @@ for chains in chain_output:
     csv_output.append(atom_column)
     csv_output.append([atoms.get_bfactor() for atoms in chains.get_atoms()])
 # transpose matrix to desired format
-transposed = map(lambda *x: list(x), *csv_output)
+transposed = transposed = [list(row) for row in itertools.zip_longest(*csv_output)]
 if args.csvwrite:
     with open(args.output_name + '.csv', 'w') as csvfile:
         mywriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
