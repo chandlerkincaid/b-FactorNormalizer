@@ -41,7 +41,7 @@ for chains in chain_output:
     csv_output.append(atom_column)
     csv_output.append([atoms.get_bfactor() for atoms in chains.get_atoms()])
 # transpose matrix to desired format
-transposed = transposed = [list(row) for row in itertools.zip_longest(*csv_output)]
+transposed = [list(row) for row in itertools.zip_longest(*csv_output)]
 if args.csvwrite:
     with open(args.output_name + '.csv', 'w') as csvfile:
         mywriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
