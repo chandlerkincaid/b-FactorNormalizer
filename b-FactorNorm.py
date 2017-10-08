@@ -14,8 +14,8 @@ file_parser.add_argument("output_name", help="specify file output name, if no pa
                                              "file will output where the script is located")
 file_parser.add_argument("-w", "--csvwrite", help="adding this flag will output a csv file", action="store_true")
 file_parser.add_argument("-c", "--bychain", help="adding this flag will normalize per chain", action="store_true")
-file_parser.add_argument("-r", "--resrange", nargs=2, type=int, help="adding this flag follow by two numbers will "
-                                                            "specify only that residue range")
+file_parser.add_argument("-r", "--resrange", nargs=2, type=int, help="adding this flag followed by two numbers will "
+                                                            "specify only that residue range. Experimental")
 args = file_parser.parse_args()
 # biopython file handling
 PDB_parser = PDBParser()
