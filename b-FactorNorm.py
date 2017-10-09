@@ -20,7 +20,7 @@ args = file_parser.parse_args()
 # biopython file handling
 PDB_parser = PDBParser()
 # structure = PDB_parser.get_structure('myPDB', open(args.pdb_in, "r"))  # get our structure
-structure = PDB_parser.get_structure('myPDB', 'Random_refine_2.pdb')  # get our structure
+structure = PDB_parser.get_structure('myPDB', args.pdb_in)  # get our structure
 if args.bychain:
     # this option normalizes bFactor per chain instead of the entire structure
     for model in structure:
@@ -28,7 +28,6 @@ if args.bychain:
             current_chain = []
             if args.resrange is not None:
                 mod_chain = list(chain)[args.resrange[0]: args.resrange[1]]
-                print(mod_chain)
             else:
                 mod_chain = chain
             for residue in mod_chain:
