@@ -21,8 +21,18 @@ args = file_parser.parse_args()
 PDB_parser = PDBParser()
 # structure = PDB_parser.get_structure('myPDB', open(args.pdb_in, "r"))  # get our structure
 structure = PDB_parser.get_structure('myPDB', args.pdb_in)  # get our structure
+# pattern for id parsing
+pattern = re.compile('[A-Z0-9]+')
 if args.resrange is not None:
-    max_length = np.max([len(list(chain)) for chain in structure.get_chains()])
+    res_strings = [re.findall(pattern, str(residue.get_id())) for residue in structure.get_residues()]
+    res_id_raw = [res[0] for res in res_strings]
+    res_id_pure = []
+    for res in res_id_raw:
+        try: 
+            res_id_pure.append(int(res))
+        except:
+            continue
+    max_length = np.max(res_id_pure) + 1
     prefix = range(1, args.resrange[0])
     suffix = range(args.resrange[1] + 1, max_length)
     for chain in structure.get_chains():
@@ -60,12 +70,8 @@ io.set_structure(structure)
 io.save(args.output_name)
 # csv output
 csv_output = []
-if args.resrange is not None:
-    chain_output = [list(chain)[args.resrange[0]: args.resrange[1]] for chain in structure.get_chains()]
-else:
-    chain_output = structure.get_chains()
+chain_output = structure.get_chains()
 # add an entire chains residues, atoms, and b -factor to rows
-pattern = re.compile('[A-Z0-9]+')
 for chains in chain_output:
     atom_strings = [re.findall(pattern, str(atoms.get_full_id())) for residues in chains for atoms in residues]
     chain_column = [atoms[2] for atoms in atom_strings]
