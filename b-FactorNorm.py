@@ -21,16 +21,27 @@ args = file_parser.parse_args()
 PDB_parser = PDBParser()
 # structure = PDB_parser.get_structure('myPDB', open(args.pdb_in, "r"))  # get our structure
 structure = PDB_parser.get_structure('myPDB', args.pdb_in)  # get our structure
+if args.resrange is not None:
+    max_length = np.max([len(list(chain)) for chain in structure.get_chains()])
+    prefix = range(1, args.resrange[0])
+    suffix = range(args.resrange[1] + 1, max_length)
+    for chain in structure.get_chains():
+        for index in prefix:
+            try:
+                chain.detach_child((' ', index, ' '))
+            except:
+                continue
+        for index in suffix:
+            try:
+                chain.detach_child((' ', index, ' '))
+            except:
+                continue
 if args.bychain:
     # this option normalizes bFactor per chain instead of the entire structure
     for model in structure:
         for chain in model:
             current_chain = []
-            if args.resrange is not None:
-                mod_chain = list(chain)[args.resrange[0]: args.resrange[1]]
-            else:
-                mod_chain = chain
-            for residue in mod_chain:
+            for residue in chain:
                 for atom in residue:
                     current_chain.append(atom.get_bfactor())
             bFactors_mean = np.mean(current_chain)
@@ -38,14 +49,7 @@ if args.bychain:
             [x.set_bfactor((x.get_bfactor() - bFactors_mean) / bFactors_stDev) for x in chain.get_atoms()]
 else:
     #  this option normalizes bFactor across the entire structure
-    if args.resrange is not None:
-        mod_res_list = []
-        for model in structure:
-            for chain in model:
-                mod_res_list.append(list(chain)[args.resrange[0]: args.resrange[1]])
-        atom_bFactors = [atom.get_bfactor() for residue in mod_res_list for atom in residue]
-    else:
-        atom_bFactors = [x.get_bfactor() for x in structure.get_atoms()]
+    atom_bFactors = [x.get_bfactor() for x in structure.get_atoms()]
     bFactors_mean = np.mean(atom_bFactors)
     bFactors_stDev = np.std(atom_bFactors)
     # set atoms to have normalized bfactor via list comprehensions
